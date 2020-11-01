@@ -1,52 +1,54 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import Head from "next/head";
+import Link from "next/link";
+import styles from "../styles/Home.module.css";
+import { PrismaClient } from "@prisma/client";
 
-export default function Home() {
+const prisma = new PrismaClient();
+
+export async function getStaticProps() {
+  const feed = await prisma.post.findMany();
+  feed.map((post) => (post.createdAt = post.createdAt.toISOString()));
+
+  return {
+    props: { feed },
+  };
+}
+
+export default function Home({ feed }) {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Create Next App</title>
+        <title>next-prisma-crud-example</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          Welcome to my{" "}
+          <a href="https://nextjs.org">next-prisma-crud-example</a>
         </h1>
 
         <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
+          Basic example with all CRUD operations against a PostgreSQL database!
         </p>
 
+        <Link href="/new">
+          <button>
+            <a>New post</a>
+          </button>
+        </Link>
+
         <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+          {feed.map((post) => (
+            <a
+              key={post.id}
+              href="https://nextjs.org/learn"
+              className={styles.card}
+            >
+              <h3>{post.title} &rarr;</h3>
+              <p>{post.content}</p>
+            </a>
+          ))}
         </div>
       </main>
 
@@ -56,10 +58,10 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
+          Powered by{" "}
           <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
         </a>
       </footer>
     </div>
-  )
+  );
 }
