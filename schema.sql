@@ -1,0 +1,36 @@
+DROP TABLE IF EXISTS "public"."User" CASCADE;
+DROP TABLE IF EXISTS "public"."Profile" CASCADE;
+DROP TABLE IF EXISTS "public"."Post" CASCADE;
+DROP TABLE IF EXISTS "public"."Comment" CASCADE;
+
+CREATE TABLE "public"."User" (
+  id SERIAL PRIMARY KEY NOT NULL,
+  name VARCHAR(255),
+  email VARCHAR(255) UNIQUE NOT NULL
+);
+
+CREATE TABLE "public"."Profile" (
+  id SERIAL PRIMARY KEY NOT NULL,
+  bio TEXT,
+  "userId" INTEGER,
+  FOREIGN KEY ("userId") REFERENCES "public"."User"(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE "public"."Post" (
+  id SERIAL PRIMARY KEY NOT NULL,
+  "createdAt" TIMESTAMP NOT NULL DEFAULT NOW(),
+  title VARCHAR(255) NOT NULL,
+  content TEXT,
+  "authorId" INTEGER,
+  FOREIGN KEY ("authorId") REFERENCES "public"."User"(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE "public"."Comment" (
+  id SERIAL PRIMARY KEY NOT NULL,
+  "createdAt" TIMESTAMP NOT NULL DEFAULT NOW(),  
+  content TEXT,
+  "authorId" INTEGER,
+  FOREIGN KEY ("authorId") REFERENCES "public"."User"(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  "postId" INTEGER, 
+  FOREIGN KEY ("postId") REFERENCES "public"."Post"(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
