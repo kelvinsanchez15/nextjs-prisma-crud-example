@@ -11,14 +11,18 @@ export default function newPost() {
     e.preventDefault();
     try {
       const body = { email, title, content };
-      await fetch(`http://localhost:3000/api/post`, {
+      const res = await fetch(`/api/post`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
+      if (!res.ok) {
+        const { error } = await res.json();
+        throw new Error(error);
+      }
       await Router.push("/");
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 
