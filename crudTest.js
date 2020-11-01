@@ -1,5 +1,6 @@
-// require("dotenv").config({ path: ".env.local" });
-// const { PrismaClient } = require("@prisma/client");
+// File to test CRUD operations directly on the prisma client
+require("dotenv").config({ path: ".env.local" });
+const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
