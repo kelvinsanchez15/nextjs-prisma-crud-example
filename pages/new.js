@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Router from "next/router";
 
 export default function newPost() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("kelvin@prisma.io");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 

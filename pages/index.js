@@ -6,15 +6,18 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export async function getStaticProps() {
-  const feed = await prisma.post.findMany();
-  feed.map((post) => (post.createdAt = post.createdAt.toISOString()));
+  const postList = await prisma.post.findMany();
+  postList.map((post) => (post.createdAt = post.createdAt.toISOString()));
 
   return {
-    props: { feed },
+    props: {
+      postList,
+    },
+    revalidate: 2,
   };
 }
 
-export default function Home({ feed }) {
+export default function Home({ postList }) {
   return (
     <div className={styles.container}>
       <Head>
@@ -39,15 +42,13 @@ export default function Home({ feed }) {
         </Link>
 
         <div className={styles.grid}>
-          {feed.map((post) => (
-            <a
-              key={post.id}
-              href="https://nextjs.org/learn"
-              className={styles.card}
-            >
-              <h3>{post.title} &rarr;</h3>
-              <p>{post.content}</p>
-            </a>
+          {postList.map((post) => (
+            <Link href={`/p/${post.id}`} key={post.id}>
+              <a className={styles.card}>
+                <h3>{post.title} &rarr;</h3>
+                <p>{post.content}</p>
+              </a>
+            </Link>
           ))}
         </div>
       </main>

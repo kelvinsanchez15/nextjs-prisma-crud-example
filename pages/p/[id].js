@@ -1,36 +1,71 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
 import styles from "../../styles/Home.module.css";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function getServerSideProps({ params }) {
-  const post = await prisma.post.findOne({
-    where: {
-      id: Number(params?.id) || -1,
+export async function getStaticPaths() {
+  const postList = await prisma.post.findMany();
+  const paths = postList.map((post) => ({
+    params: {
+      id: post.id.toString(),
     },
-    include: {
-      author: {
-        select: { name: true, email: true },
-      },
-    },
-  });
-
-  post.createdAt = post.createdAt.toISOString();
-
+  }));
   return {
-    props: post,
+    paths,
+    fallback: true,
   };
-
-  // const feed = await prisma.post.findMany();
-  // feed.map((post) => (post.createdAt = post.createdAt.toISOString()));
-
-  // return {
-  //   props: { feed },
-  // };
 }
 
-export default function Post(post) {
+export async function getStaticProps({ params }) {
+  let post = null;
+  try {
+    post = await prisma.post.findOne({
+      where: {
+        id: Number(params?.id) || -1,
+      },
+      include: {
+        author: {
+          select: { name: true, email: true },
+        },
+      },
+    });
+    if (post) {
+      post.createdAt = post.createdAt.toISOString();
+    }
+  } catch (error) {
+    if (error.status !== 404) {
+      console.log(error);
+      throw error;
+    }
+  }
+  return {
+    props: {
+      post,
+    },
+    revalidate: 2,
+  };
+}
+
+export default function Post({ post }) {
+  const router = useRouter();
+
+  if (router.isFallback) {
+    return <div>loading...</div>;
+  }
+
+  if (!post) {
+    return (
+      <>
+        <Head>
+          <meta name="robots" content="noindex" />
+        </Head>
+        <div>404 - Page not found!</div>
+      </>
+    );
+  }
+
   return (
     <>
       <Head>

@@ -7,17 +7,21 @@ const prisma = new PrismaClient();
 // Optional fields in body: content
 export default async function handle(req, res) {
   const { title, content, email } = req.body;
-  if (!req.method === "POST") {
-    throw new Error(
-      `The HTTP ${req.method} method is not supported at this route.`
-    );
+  try {
+    if (!req.method === "POST") {
+      throw new Error(
+        `The HTTP ${req.method} method is not supported at this route.`
+      );
+    }
+    const post = await prisma.post.create({
+      data: {
+        title,
+        content,
+        author: { connect: { email } },
+      },
+    });
+    res.status(201).json(post);
+  } catch (error) {
+    res.status(400).send(error.message);
   }
-  const post = await prisma.post.create({
-    data: {
-      title,
-      content,
-      author: { connect: { email } },
-    },
-  });
-  res.status(201).json(post);
 }
