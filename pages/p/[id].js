@@ -75,6 +75,13 @@ export default function Post({ post }) {
     );
   }
 
+  async function deletePost(id) {
+    await fetch(`http://localhost:3000/api/post/${id}`, {
+      method: "DELETE",
+    });
+    router.push("/");
+  }
+
   return (
     <>
       <Head>
@@ -85,6 +92,7 @@ export default function Post({ post }) {
         <h3>{post.title} &rarr;</h3>
         <p>{post.content}</p>
         <p>By {post.author.name}</p>
+        <button onClick={() => deletePost(post.id)}>Delete</button>
       </div>
     </>
   );
