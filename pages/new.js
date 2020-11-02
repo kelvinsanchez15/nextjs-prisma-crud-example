@@ -20,7 +20,8 @@ export default function newPost() {
         const { error } = await res.json();
         throw new Error(error);
       }
-      await Router.push("/");
+      const post = await res.json();
+      await Router.push(`/p/${post.id}`);
     } catch (error) {
       console.log(error);
     }
