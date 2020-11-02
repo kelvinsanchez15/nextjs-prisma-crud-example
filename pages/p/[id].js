@@ -3,9 +3,8 @@ import { useRouter } from "next/router";
 import styles from "../../styles/Home.module.css";
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
-
 export async function getStaticPaths() {
+  const prisma = new PrismaClient();
   const postList = await prisma.post.findMany();
   const paths = postList.map((post) => ({
     params: {
