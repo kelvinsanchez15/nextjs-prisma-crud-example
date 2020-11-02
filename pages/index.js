@@ -5,15 +5,20 @@ import { PrismaClient } from "@prisma/client";
 
 export async function getStaticProps() {
   const prisma = new PrismaClient();
-  const postList = await prisma.post.findMany();
-  postList.map((post) => (post.createdAt = post.createdAt.toISOString()));
-
-  return {
-    props: {
-      postList,
-    },
-    revalidate: 2,
-  };
+  try {
+    const postList = await prisma.post.findMany();
+    postList.map((post) => (post.createdAt = post.createdAt.toISOString()));
+    return {
+      props: {
+        postList,
+      },
+      revalidate: 2,
+    };
+  } catch (error) {
+    console.log(error);
+  } finally {
+    await prisma.$disconnect();
+  }
 }
 
 export default function Home({ postList }) {
@@ -48,6 +53,7 @@ export default function Home({ postList }) {
                 <p>{post.content}</p>
               </a>
             </Link>
+            // <div>xd</div>
           ))}
         </div>
       </main>

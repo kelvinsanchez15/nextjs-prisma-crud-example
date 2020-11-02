@@ -5,16 +5,23 @@ import { PrismaClient } from "@prisma/client";
 
 export async function getStaticPaths() {
   const prisma = new PrismaClient();
-  const postList = await prisma.post.findMany();
-  const paths = postList.map((post) => ({
-    params: {
-      id: post.id.toString(),
-    },
-  }));
-  return {
-    paths,
-    fallback: true,
-  };
+  try {
+    const postList = await prisma.post.findMany();
+    const paths = postList.map((post) => ({
+      params: {
+        id: post.id.toString(),
+      },
+    }));
+    return {
+      paths,
+      fallback: true,
+    };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  } finally {
+    await prisma.$disconnect();
+  }
 }
 
 export async function getStaticProps({ params }) {
@@ -34,18 +41,20 @@ export async function getStaticProps({ params }) {
     if (post) {
       post.createdAt = post.createdAt.toISOString();
     }
+    return {
+      props: {
+        post,
+      },
+      revalidate: 2,
+    };
   } catch (error) {
     if (error.status !== 404) {
       console.log(error);
       throw error;
     }
+  } finally {
+    await prisma.$disconnect();
   }
-  return {
-    props: {
-      post,
-    },
-    revalidate: 2,
-  };
 }
 
 export default function Post({ post }) {
