@@ -18,6 +18,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
+  const prisma = new PrismaClient();
   let post = null;
   try {
     post = await prisma.post.findOne({
