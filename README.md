@@ -1,30 +1,19 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This project aims to test full integration between NextJS & Prisma with a PostgreSQL database.
 
-## Getting Started
+## Enviromental variables setup
 
-First, run the development server:
+This project makes use of a single _.env.local_ file in the root directory, so in order to work the [dotenv CLI](https://www.npmjs.com/package/dotenv-cli) can be used to overwrite the path when running Prisma CLI actions (Introspect, Generate, Studio).
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+The _package.json_ file has the following scripts configured to facilitate the Prisma workflow.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`npm run prisma:introspect`
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+`npm run prisma:generate`
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+`npm run prisma:studio`
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/import?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+A Postinstall script is configured to generate the files necessary for the operation of the Prisma client during Vercel deployment.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+`"postinstall": "prisma generate"`
