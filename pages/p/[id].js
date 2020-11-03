@@ -76,7 +76,7 @@ export default function Post({ post }) {
   }
 
   async function deletePost(id) {
-    await fetch(`http://localhost:3000/api/post/${id}`, {
+    await fetch(`/api/post/${id}`, {
       method: "DELETE",
     });
     router.push("/");
