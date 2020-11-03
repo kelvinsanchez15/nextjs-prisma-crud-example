@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 // POST /api/post
 // Required fields in body: email, title
 // Optional fields in body: content
-export default async function handle(req, res) {
+export default async function handler(req, res) {
   const { title, content, email } = req.body;
   try {
     if (!req.method === "POST") {
